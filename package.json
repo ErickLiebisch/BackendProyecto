@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "node": "^21.1.0"
+  },
+  "name": "proyectobackend",
+  "version": "1.0.0",
+  "description": "proyecto backend e-commerce",
+  "main": "/src/ProductManager.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "erick",
+  "license": "ISC"
+}
