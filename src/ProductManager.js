@@ -1,102 +1,111 @@
 import * as fs from "fs";
 
 
-class ProductManager{
-constructor(path){
-    this.path=path;
-}
-async addProduct(title,description,price,thumbnail,code,stock){
-const products= await getJsonFromFile(this.path);
-const oldProduct=products.find((pro)=>code===pro.code);
-const product={
-    title:title,
-    decription:description,
-    price:price,
-    thumbnail:thumbnail,
-    code:code,
-    stock:stock,
-    id: Date.now(),
-}
-if(!title || !description || !price || !thumbnail || !code || !stock ) {
-    console.log("Please fill all information")
-}else if(!oldProduct){
-    products.push(product)
-    await saveJsonInFile(this.path,products);
-}else{
-    console.log("product repeated")
-}
-}
-getProducts(){
-    if(!getJsonFromFile(this.path)){
-        console.log("there is no products")
-    }else{
-        console.log(getJsonFromFile(this.path))
-        return getJsonFromFile(this.path);
+class ProductManager {
+    constructor(path) {
+        this.path = path;
     }
-    
-}
-async getProductById(id){
-    const products= await getJsonFromFile(this.path)
-    const product= products.find((pro)=>id===pro.id)
-    if(!product){
-        console.log("not found")
-    }else{
-        return product
-    }
-
-}
-async updateProduct(id,change,value){
-    const products= await getJsonFromFile(this.path);
-    let product = this.getProductById(id);
-    if(product){
-        if(change==='title'){
-            product.title=value;
-            await saveJsonInFile(this.path,products)
-        }else if(change==='description'){
-            product.description=value;
-            await saveJsonInFile(this.path,products)
-        }else if(change==='price'){
-            product.price=value;
-            await saveJsonInFile(this.path,products)
-        }else if(change==='thumbnail'){
-            product.thumbnail=value;
-            await saveJsonInFile(this.path,products)
-        }else if(change==='code'){
-            product.code=value;
-            await saveJsonInFile(this.path,products)
-        }else if(change==='stock'){
-            product.stock=value;
-            await saveJsonInFile(this.path,products)
-        }else{
-            console.log("Please enter a valid change")
+    async addProduct(title, description, price, thumbnail, code, stock) {
+        const products = await getJsonFromFile(this.path);
+        const oldProduct = products.find((pro) => code === pro.code);
+        const product = {
+            title: title,
+            decription: description,
+            price: price,
+            thumbnail: thumbnail,
+            code: code,
+            status: true,
+            stock: stock,
+            id: Date.now(),
         }
-    }else{
-        console.log("product to update not found")
+        if (!title || !description || !price || !thumbnail || !code || !stock) {
+            console.log("Please fill all information")
+        } else if (!oldProduct) {
+            products.push(product)
+            await saveJsonInFile(this.path, products);
+        } else {
+            console.log("product repeated")
+        }
+    }
+    getProducts() {
+        if (!getJsonFromFile(this.path)) {
+            console.log("there is no products")
+        } else {
+            console.log(getJsonFromFile(this.path))
+            return getJsonFromFile(this.path);
+        }
+
+    }
+    async getProductById(id) {
+        const products = await getJsonFromFile(this.path)
+        const product = products.find((pro) => id === pro.id)
+        if (!product) {
+            console.log("not found")
+        } else {
+            return product
+        }
+
+    }
+    async updateProduct(id, change, value) {
+        const products = await getJsonFromFile(this.path);
+        let product = products.find(pro => pro.id === id);;
+        if (product) {
+            if (change === 'title') {
+                product.title = value;
+                await saveJsonInFile(this.path, products)
+            } else if (change === 'description') {
+                product.description = value;
+                await saveJsonInFile(this.path, products)
+            } else if (change === 'price') {
+                product.price = value;
+                await saveJsonInFile(this.path, products)
+            } else if (change === 'thumbnail') {
+                product.thumbnail = value;
+                await saveJsonInFile(this.path, products)
+            } else if (change === 'code') {
+                product.code = value;
+                await saveJsonInFile(this.path, products)
+            } else if (change === 'status' && value== true) {
+                product.status = true;
+                await saveJsonInFile(this.path, products)
+            }else if (change === 'status' && value== false) {
+                product.status = false;
+                await saveJsonInFile(this.path, products)
+            }
+            
+            else if (change === 'stock') {
+                product.stock = value;
+                await saveJsonInFile(this.path, products)
+            } else {
+                console.log("Please enter a valid change")
+            }
+        } else {
+            console.log("product to update not found")
+        }
+    }
+    async deleteProduct(id) {
+        const products = await getJsonFromFile(this.path);
+        const product = this.getProductById(id);
+        if (!product || !products) {
+            console.log("there is no products")
+        } else {
+            const index = products.indexOf(product);
+            products.splice(index, 1);
+            await saveJsonInFile(this.path, products);
+            console.log("the product with the id: " + id + "was deleted")
+        }
     }
 }
-async deleteProduct(id){
-    const products = await getJsonFromFile(this.path);
-    const product=this.getProductById(id);
-    if(!product || !products){
-        console.log("there is no products")
-    }else{
-        const index= products.indexOf(product);
-        products.splice(index,1);
-        await saveJsonInFile(this.path,products);
-        console.log("the product with the id: "+ id + "was deleted")
-    }
-}
-}
-const getJsonFromFile= async (path)=>{
-    if(!fs.existsSync(path)){
+const getJsonFromFile = async (path) => {
+    if (!fs.existsSync(path)) {
         return [];
     }
-    const content= await fs.promises.readFile(path,'utf-8');
+    const content = await fs.promises.readFile(path, 'utf-8');
     return JSON.parse(content);
 };
-const saveJsonInFile=(path,data)=>{
-    const content= JSON.stringify(data,null,'\t');
-    return fs.promises.writeFile(path,content,'utf-8')
+const saveJsonInFile = (path, data) => {
+    const content = JSON.stringify(data, null, '\t');
+    return fs.promises.writeFile(path, content, 'utf-8')
 }
 //     async function test() {
 //     const productmanager= new ProductManager('Products.js');
@@ -131,4 +140,4 @@ const saveJsonInFile=(path,data)=>{
 //     }
 // create();
 
- export default ProductManager;
+export default ProductManager;
