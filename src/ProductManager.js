@@ -27,7 +27,7 @@ class ProductManager {
             console.log("product repeated")
         }
     }
-    getProducts() {
+        getProducts() {
         if (!getJsonFromFile(this.path)) {
             console.log("there is no products")
         } else {

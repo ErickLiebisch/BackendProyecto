@@ -1,0 +1,18 @@
+<h1>Bienvenidos a la tiendita de erick</h1>
+<form id="form-products">
+<input id="input-title" type="text" placeholder="title">
+<input id="input-description" type="text" placeholder="description">
+<input id="input-price" type="number" placeholder="price">
+<input id="input-thumbnail" type="text" placeholder="thumbnail">
+<input id="input-code" type="text" placeholder="code">
+<input id="input-stock" type="number" placeholder="stock">
+<input id="input-category" type="text" placeholder="category">
+<input type="submit" value="Añadir producto">
+<div id="product-log"></div>
+</form>
+<form id="form-delete">
+    <input id="input-delete" type="number" placeholder="ingrese id">
+    <input type="submit" value="Borrar producto">
+</form>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/index.js"></script>
