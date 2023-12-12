@@ -118,5 +118,15 @@
 		"status": true,
 		"stock": 4,
 		"id": 1701123631800
+	},
+	{
+		"title": "producto prueba 13",
+		"decription": "dgvfd",
+		"price": "1000",
+		"thumbnail": "dfd",
+		"code": "hcxujchb",
+		"status": true,
+		"stock": "55",
+		"id": 1702417306456
 	}
 ]

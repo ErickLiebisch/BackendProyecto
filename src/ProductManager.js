@@ -23,6 +23,8 @@ class ProductManager {
         } else if (!oldProduct) {
             products.push(product)
             await saveJsonInFile(this.path, products);
+            this.emit('newProduct',product);
+            
         } else {
             console.log("product repeated")
         }
