@@ -1,11 +1,11 @@
 import { Server } from "socket.io";
-import ProductManager from "./ProductManager.js";
+import ProductManager from "./dao/Fs-managers/ProductManager.js";
+import ChatManager from "./dao/MongoDB-managers/ChatManager.js";
 const productmanager = new ProductManager('Products.js');
-let socketServer;
+let io;
 export const init = (httpServer) => {
-    socketServer = new Server(httpServer);
-
-    socketServer.on('connection', async (socketClient) => {
+    io = new Server(httpServer);
+    io.on('connection', async (socketClient) => {
         const products = await productmanager.getProducts();
         socketClient.emit('productList', products)
         console.log(`new socket client ${socketClient.id} connected to server`);
@@ -14,16 +14,24 @@ export const init = (httpServer) => {
         socketClient.on('notification', (message) => {
             console.log(`Client sent a new message: ${message}`)
         })
-        socketServer.emit('message', { status: 'on air' });
+        io.emit('message', { status: 'on air' });
         socketClient.on('newProduct', async (producto) => {
             await productmanager.addProduct(producto.title, producto.description, producto.price, producto.thumbnail, producto.code, producto.stock);
             const products = await productmanager.getProducts();
-            socketServer.emit('productList', products);
+            io.emit('productList', products);
         })
         socketClient.on('deleteProduct', async (pid) => {
             await productmanager.deleteProduct(parseInt(pid));
             const products = await productmanager.getProducts();
-            socketServer.emit('productList', products);
+            io.emit('productList', products);
+        })
+        console.log(`Nuevo usuario en chat (${socketClient.id})`);
+        const messages=await ChatManager.getMessages();
+        socketClient.emit('update-messages',messages);
+        socketClient.on('new-message',async (message) =>{
+            await ChatManager.sendMessage(message);
+            const messages= await ChatManager.getMessages();
+            socketClient.emit('update-messages',messages)
         })
 
     })

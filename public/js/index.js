@@ -1,3 +1,48 @@
+
+// (function(){
+//     const socket = io();
+//     let email='';
+//     document.getElementById('form-message').addEventListener('submit',async (event)=>{
+//         event.preventDefault();
+//         const input= document.getElementById('input-message');
+//         const newMessage={
+//             user:email,
+//             message:input.value,
+//         }
+//         input.value='';
+//         input.focus();
+//         socket.emit('new-message',newMessage);
+        
+//     }
+//     )
+//     socket.on('update-messages',(messages)=>{
+//         console.log('messages',messages);
+//         const log=document.getElementById('log-messages');
+//         log.innerText='';
+//         messages.forEach((mes) => {
+//             const p= document.createElement('p');
+//             p.innerText=`${mes.user}: ${mes.message}`;
+//             log.appendChild(p);    
+//         });
+//     });
+//     Swal.fire({
+//         title: 'Log in',
+//         input: 'text',
+//         inputLabel: 'Enter your username please',
+//         allowOutsideClick: false,
+//         inputValidator: (value) => {
+//           if (!value) {
+//             return 'Enter a valid username please';
+//           }
+//         },
+//       })
+//       .then((result) => {
+//         email = result.value.trim();
+//         console.log(`Welcome back ${email}`);
+    
+//       });
+
+// })();
 function toBe() {
     const socket = io();
     document.getElementById('form-products').addEventListener('submit', (event) => {

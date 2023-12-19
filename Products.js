@@ -121,7 +121,7 @@
 	},
 	{
 		"title": "producto prueba 13",
-		"decription": "dgvfd",
+		"description": "dgvfd",
 		"price": "1000",
 		"thumbnail": "dfd",
 		"code": "hcxujchb",

@@ -1,5 +1,7 @@
-import ProductManager from "../../ProductManager.js";
-import CartManager from "../../CartManager.js";
+import ProductManager from "../../dao/Fs-managers/ProductManager.js";
+import CartManager from "../../dao/Fs-managers/CartManager.js";
+import PManager from "../../dao/MongoDB-managers/ProductsManager.js";
+import CManager from "../../dao/MongoDB-managers/CartsManager.js";
 import { Router } from "express";
 
 const router= Router();
@@ -8,14 +10,18 @@ const productmanager= new ProductManager('Products.js');
 const cartmanager= new CartManager('Carts.js');
 
 router.post('/carts',async(req,res)=>{
-await cartmanager.createCart();
-const carts= await cartmanager.getCarts();
+const {body}=req;
+//await cartmanager.createCart();
+//const carts= await cartmanager.getCarts();
+await CManager.createCart(body);
+const carts= await CManager.getCarts();
 res.status(201).json(carts);
 })
 
 router.get('/carts/:cid', async(req,res)=>{
     const {cid}= req.params;
-    const cart= await cartmanager.getProductsFromCart(parseInt(cid));
+    //const cart= await cartmanager.getProductsFromCart(parseInt(cid));
+    const cart= await CManager.getProductsFromCart(cid)
     if(!cart){
         res.status(404).json({error:'Cart not found'});
     }else{
@@ -25,14 +31,17 @@ router.get('/carts/:cid', async(req,res)=>{
 router.post('/carts/:cid/product/:pid',async (req,res)=>{
     const {cid,pid}=req.params;
     const body=req.body;
-    const product= await productmanager.getProductById(parseInt(pid));
-    const cart= await cartmanager.getProductsFromCart(parseInt(cid));
+    //const product= await productmanager.getProductById(parseInt(pid));
+    //const cart= await cartmanager.getProductsFromCart(parseInt(cid));
+    const product= await PManager.getProductById(pid);
+    const cart= await cartmanager.getProductsFromCart(cid)
     if(!product || !cart){
         res.status(404).json('product or cart not found')
     }else{
-        await cartmanager.addProductsToCart(parseInt(cid),parseInt(pid),body.quantity);
-        const cartUpdated= await cartmanager.getProductsFromCart(parseInt(cid));
-        res.status(201).json(cartUpdated);
+        //await cartmanager.addProductsToCart(parseInt(cid),parseInt(pid),body.quantity);
+        //const cartUpdated= await cartmanager.getProductsFromCart(parseInt(cid));
+        await CManager.addProductsToCart(cid,pid,body.quantity);
+        res.status(201).json(cart);
     }
 })
 
