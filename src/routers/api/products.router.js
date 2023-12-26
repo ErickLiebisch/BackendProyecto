@@ -1,21 +1,26 @@
 import PManager from "../../dao/MongoDB-managers/ProductsManager.js";
 import ProductManager from "../../dao/Fs-managers/ProductManager.js";
 import { Router } from "express";
+import { buildResponsePaginated } from "../../utils.js";
+import productModel from "../../dao/models/product-model.js";
+
 const productmanager=new ProductManager("Products.js")
 const router= Router();
 
-router.get('/products',async (req,res)=>{
-    const {query}= req;
-    const {limit}= query;
-    //const products= await productmanager.getProducts();
-    const products= await PManager.getProducts();
-    if(!limit){
-        res.status(200).json(products);
-    }else{
-        const response= products.slice(0,parseInt(limit));
-        res.status(200).json(response);
 
-    }
+router.get('/products',async (req,res)=>{
+   const {limit=5,page=1,sort,search}=req.query;
+   const criteria={};
+   const options= {limit,page}
+   
+   if(sort){
+    options.sort={price:sort}
+   }
+   if(search){
+    criteria.category=search;
+   }
+   const result= await productModel.paginate(criteria,options);
+   res.status(200).json(buildResponsePaginated({...result,sort,search}));
 
 
 })

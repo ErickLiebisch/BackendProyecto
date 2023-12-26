@@ -1,7 +1,7 @@
 [
 	{
 		"title": "producto prueba 2",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -13,7 +13,7 @@
 	},
 	{
 		"title": "producto prueba 3",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -25,7 +25,7 @@
 	},
 	{
 		"title": "producto prueba 4",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -37,7 +37,7 @@
 	},
 	{
 		"title": "producto prueba 5",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -49,7 +49,7 @@
 	},
 	{
 		"title": "producto prueba 6",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -61,7 +61,7 @@
 	},
 	{
 		"title": "producto prueba 7",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -73,7 +73,7 @@
 	},
 	{
 		"title": "producto prueba 8",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -85,7 +85,7 @@
 	},
 	{
 		"title": "producto prueba 9",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -97,7 +97,7 @@
 	},
 	{
 		"title": "producto prueba 10",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 200,
 		"thumbnail": [
 			"Sin imagen"
@@ -109,7 +109,7 @@
 	},
 	{
 		"title": "producto prueba 11",
-		"decription": "Este es un producto prueba",
+		"description": "Este es un producto prueba",
 		"price": 101,
 		"thumbnail": [
 			"Sin imagen"

@@ -67,13 +67,13 @@ function toBe() {
 
         socket.emit('newProduct', newProduct);
 
-        title = '';
-        description = '';
-        price = '';
-        thumbnail = '';
-        code = '';
-        stock = '';
-        category = '';
+        title.innerText() = '';
+        description.innerText() = '';
+        price.innerText() = '';
+        thumbnail.innerText() = '';
+        code.innerText() = '';
+        stock.innerText() = '';
+        category.innerText() = '';
         title.focus();
     })
 

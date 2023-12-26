@@ -6,6 +6,8 @@ import indexRouter from './routers/views/index.router.js'
 import ProductRouter from "./routers/api/products.router.js"
 import CartRouter from "./routers/api/carts.router.js"
 import appRouter from "./routers/views/app.router.js"
+import PRouter from "./routers/views/products.router.js"
+import CRouter from "./routers/views/carts.router.js"
 const app= express();
 //const PORT= 8080;
 app.use(express.json());
@@ -14,7 +16,7 @@ app.use(express.static(path.join(__dirname,'../public')));
 app.engine('handlebars',handlebars.engine());
 app.set('views',path.join(__dirname,'views'));
 app.set('view engine','handlebars');
-app.use('/', indexRouter, appRouter);
+app.use('/', indexRouter, appRouter, PRouter, CRouter);
 app.use('/api',ProductRouter,CartRouter);
 
 // app.listen(PORT, ()=>{
