@@ -3,6 +3,7 @@ import url from 'url';
 const __filename= url.fileURLToPath(import.meta.url);
 export const __dirname=path.dirname(__filename);
 export const URL_BASE='http://localhost:8080'
+export const URI= 'mongodb+srv://erickliebisch:roBR732GGbrXxw5J@cluster0.genvpqy.mongodb.net/'
 
 export const buildResponsePaginated= (data) =>{
     return{

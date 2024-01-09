@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const URI= 'mongodb+srv://erickliebisch:roBR732GGbrXxw5J@cluster0.genvpqy.mongodb.net/'
+import { URI } from "../utils.js";
 export const initMongoDB= async ()=>{
     try {
        await mongoose.connect(URI)
