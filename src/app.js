@@ -12,6 +12,8 @@ import sessionRouter from "./routers/api/session.router.js"
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { URI } from "./utils.js";
+import passport from "passport";
+import { init as initPassport} from './config/passport.config.js'
 
 const SESSION_SECRET='xR5*1(>0a2?Jz&'
 
@@ -35,6 +37,9 @@ app.use(express.static(path.join(__dirname,'../public')));
 app.engine('handlebars',handlebars.engine());
 app.set('views',path.join(__dirname,'views'));
 app.set('view engine','handlebars');
+initPassport();
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', indexRouter, appRouter, PRouter, CRouter);
 app.use('/api',ProductRouter,CartRouter, sessionRouter);
 
