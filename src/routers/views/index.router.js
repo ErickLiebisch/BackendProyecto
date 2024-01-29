@@ -1,5 +1,6 @@
 import { Router } from "express";
 import ProductsManager from "../../dao/MongoDB-managers/ProductsManager.js";
+import cartModel from "../../dao/models/cart-model.js";
 
 const router= Router();
 
@@ -29,6 +30,20 @@ router.get('/register', async (req,res)=>{
 router.get('/password-recover',(req,res)=>{
     res.render('recover', {title: 'Recover password'});
 
+})
+router.get('/current', async (req,res)=>{
+    if(!req.user){
+        return res.redirect('/login')
+    }else{
+        const user= req.user;
+        const cart= await cartModel.findOne({_id:user.cart}).populate('products.product');
+        if(!cart){
+            const products= await ProductsManager.getProducts();
+            res.render('profile',{products: products.map(pro=>pro.toJSON()), title: 'Bienvenido/a',user:req.user.toJSON()})
+        }else{
+            res.render('current',{products:cart.products.map(pro=>pro.toJSON()),title:'Tu Carrito de compras',user:user.toJSON(),quantity:cart.quantity})
+        }
+    }
 })
 
 

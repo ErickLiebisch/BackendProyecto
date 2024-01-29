@@ -47,3 +47,14 @@ export const buildResponsePaginatedV= (data) =>{
         nextLink: data.hasNextPage?`${URL_BASE}/products/?page=${data.nextPage}&limit=${data.limit}`: null,
     }
 }
+
+export const authMiddleware= roles=>(req,res,next)=>{
+    const {user}=req;
+    if(!user){
+        return res.status(401).json({message:'no autorizado'});
+    }
+    if(!roles.include(user.role)){
+        return res.status(403).json({message:'acceso denegado'});
+    }
+    next();
+}

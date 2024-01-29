@@ -108,5 +108,11 @@ router.get('/session/github', passport.authenticate('github',{scope:['user:email
 router.get('/session/github/callback',passport.authenticate('github',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect('/profile');
 })
+router.get('/session/current', (req,res)=>{
+    if(!req.session.user){
+        return res.status(401).json({message:'no has iniciado sesión'})
+    }
+    req.status(200).json(req.session.user)
+})
 
 export default router
