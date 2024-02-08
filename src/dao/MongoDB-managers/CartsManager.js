@@ -6,8 +6,11 @@ export default class CartsManager{
       console.log("Carro creado exitosamente")
       return cart;
     }
-    static getCarts() {
-       return cartModel.find();
+    static getCarts(criteria={}) {
+       return cartModel.find(criteria);
+    }
+    static getCartById(id){
+        return cartModel.findById(id);
     }
     static async getProductsFromCart(cid){
        const cart= await cartModel.findById(cid)
@@ -93,10 +96,26 @@ export default class CartsManager{
           cart.products=data;
           const newProducts=cart.products;
           await cartModel.updateOne({_id:id},{products:newProducts})
-          console.logh("productos actualizados")
+          console.log("productos actualizados")
         }
     }  
-
+    static async deleteCart(id){
+        let cart= await cartModel.findById(id);
+        if(!cart){
+            console.log("El carro no fue encontrado")
+        }else{
+            await cartModel.deleteOne({_id:id})
+            console.log("carro eliminado")
+        }
     }
+
+    static async populate(id){
+        const result =await cartModel.findOne({_id:id}).populate('products.product');
+        return result;
+    
+    }
+}
+
+    
 
     

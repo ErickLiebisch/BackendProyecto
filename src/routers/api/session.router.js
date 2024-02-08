@@ -1,5 +1,5 @@
 import { Router } from "express";
-import userModel from "../../dao/models/user-model.js";
+import UsersController from "../../controllers/users.controller.js";
 import { error } from "console";
 import passport from "passport";
 import { createHash, isValidPassword } from "../../utils.js";
@@ -100,7 +100,7 @@ router.post('/session/password-recover', async (req,res)=>{
         return res.render('error',{title:'log error',messageError:'usuario o contraseña inválidos'});
     }
     user.password= createHash(password);
-    await userModel.updateOne({_id:user._id},user);
+    await UsersController.update({_id:user._id},user);
     res.redirect('/login');
 })
 

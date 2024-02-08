@@ -1,10 +1,6 @@
-import PManager from "../../dao/MongoDB-managers/ProductsManager.js";
-import ProductManager from "../../dao/Fs-managers/ProductManager.js";
+import ProductController from "../../controllers/products.controller.js";
 import { Router } from "express";
 import { buildResponsePaginated } from "../../utils.js";
-import productModel from "../../dao/models/product-model.js";
-
-const productmanager=new ProductManager("Products.js")
 const router= Router();
 
 
@@ -19,7 +15,7 @@ router.get('/products',async (req,res)=>{
    if(search){
     criteria.category=search;
    }
-   const result= await productModel.paginate(criteria,options);
+   const result= await ProductController.paginate(criteria,options);
    res.status(200).json(buildResponsePaginated({...result,sort,search}));
 
 
@@ -27,7 +23,7 @@ router.get('/products',async (req,res)=>{
 router.get('/products/:id',async (req,res)=>{
     const {id}= req.params;
     //const product = await productmanager.getProductById(parseInt(id));
-    const product= await PManager.getProductById(id)
+    const product= await ProductController.getProductById(id)
     if(!product){
         res.status(404).json({error: 'Product not found'})
     }else{
@@ -39,7 +35,7 @@ router.post('/products',async (req,res)=>{
     const {body}=req;
     //await productmanager.addProduct('producto prueba 12',"Este es un producto prueba",101,["Sin imagen"],"p12",5);
     //const products=await productmanager.getProducts();
-    const products= await PManager.addProduct(body);
+    const products= await ProductController.addProduct(body);
     res.status(201).json(products);
 });
 router.put('/products/:id', async (req,res)=>{
@@ -84,11 +80,11 @@ router.put('/products/:id', async (req,res)=>{
     
     // const product= await productmanager.getProductById(parseInt(id));
     //res.status(200).json(product);
-    const product= await PManager.getProductById(id);
+    const product= await ProductController.getProductById(id);
     if(!product){
         res.status(404).json({error:'Producto no encontrado'})
     }else{
-        await PManager.updateProductById(id,body);
+        await ProductController.updateProductById(id,body);
         res.status(204).end();
 
     }
@@ -99,7 +95,7 @@ router.delete('/products/:id',async (req,res)=>{
     //await productmanager.deleteProduct(parseInt(id));
     //const products= await productmanager.getProducts();
     //res.status(200).json(products);
-    await PManager.deleteProductById(id);
+    await ProductController.deleteProductById(id);
     res.status(204).end();
     
     

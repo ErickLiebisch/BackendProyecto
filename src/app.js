@@ -14,11 +14,11 @@ import MongoStore from "connect-mongo";
 import { URI } from "./utils.js";
 import passport from "passport";
 import { init as initPassport} from './config/passport.config.js'
+import config from "./config/config.js";
 
-const SESSION_SECRET='xR5*1(>0a2?Jz&'
+const SESSION_SECRET=config.sessionSecret;
 
 const app= express();
-//const PORT= 8080;
 
 
 app.use(session({
