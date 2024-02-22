@@ -2,117 +2,121 @@ import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import { error } from "console";
 import passport from "passport";
-import { createHash, isValidPassword } from "../../utils.js";
+import { StrategyMiddleware, authMiddleware, createHash, isValidPassword, generateToken, verifyToken } from "../../utils.js";
+import cookieParser from "cookie-parser";
+import UserDTO from "../../dto/user.dto.js";
 
 
-const router= Router();
+const router = Router();
 
-router.post('/session/register',passport.authenticate('register',{failureRedirect:'/register'}),async(req,res)=>{
-//     const {
-//         body:{
-//             first_Name,
-//             last_Name,
-//             email,
-//             password,
-//             age,
-//         },
-//     }=req;
-// if( !first_Name ||
-//     !last_Name ||
-//     !email ||
-//     !password
-//     ){
-//         return res.status(400).json({message: 'please fill all entries'})
-//     }
+router.post('/session/register', passport.authenticate('register', { failureRedirect: '/register', session: false }), async (req, res) => {
+    //     const {
+    //         body:{
+    //             first_Name,
+    //             last_Name,
+    //             email,
+    //             password,
+    //             age,
+    //         },
+    //     }=req;
+    // if( !first_Name ||
+    //     !last_Name ||
+    //     !email ||
+    //     !password
+    //     ){
+    //         return res.status(400).json({message: 'please fill all entries'})
+    //     }
 
 
-//         const user= await userModel.create({
-//             first_Name,
-//             last_Name,
-//             email,
-//             password,
-//             age,
-            
-        
-//         })
-        res.redirect("/login");
-    }
+    //         const user= await userModel.create({
+    //             first_Name,
+    //             last_Name,
+    //             email,
+    //             password,
+    //             age,
+
+
+    //         })
+    res.redirect("/login");
+}
 )
 
-router.post('/session/login', passport.authenticate('login',{failureRedirect:'/login'}),async(req,res) => {
-    // const {body:{email,password},}=req;
+router.post('/session/login', async (req, res) => {
 
-    // if(!email||!password){
-    //     return res.status(400).json({message: 'please fill all entries'})
+    // router.post('/session/login', passport.authenticate('login',{failureRedirect:'/login'}),async(req,res) => {
 
-    // }else if(email==="adminCoder@coder.com" && password==="adminCod3r123"){
-    //     req.session.user={
-    //         first_Name: "admin",
-    //         last_Name: "coder",
-    //         email: "adminCoder@coder.com",
-    //     }
-        
-    // res.redirect('/profile')
-    // }else{
-    //     const user= await userModel.findOne({ email });
-    //     if(!user){
-    //         return res.status(401).json({message:'invalid email or password'});
-    //     }
-    // const {
-    //     first_Name,
-    //     last_Name,
-    // }=user;
-    // req.session.user={
-    //     first_Name,
-    //     last_Name,
-    //     email,
-    // }
-    
-    
-    res.redirect('/profile')
-    }
+    const { body: { email, password }, } = req;
+    let user = {};
 
-)
+    if (!email || !password) {
+        return res.status(400).json({ message: 'please fill all entries' })
 
-router.get('/session/profile',(req,res)=>{
-    if(!req.session.user){
-        return res.status(401).json({message:'No estas loggeado'})
-    }
-    res.status(200).json(req.session.user)
-})
-router.get('/session/logout',(req,res)=>{
-    req.session.destroy((error)=>{
-        if(error){
-            return res.render('error',{title:'error de loggeo',messageError: error.message });
+    } else if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+        user = {
+            _id: id,
+            first_Name: 'Admin',
+            last_Name: 'Store',
+            email: email,
+            password: password,
+            age: 26,
+            role: 'admin',
+        }
+    } else {
+
+        user = await UsersController.getOne({ email });
+        if (!user) {
+            return new Error('invalid email or password');
+        }
+        const pass = isValidPassword(password, user)
+        if (!pass) {
+            return new Error('invalid email or password');
         }
 
-        res.redirect('/login');
-    })
-})
+        const token = generateToken(user);
+        res.cookie('token', token, {
+            maxAge: 1000 * 60,
+            httpOnly: true,
+        })
+        res.redirect('/profile')
+    }
+}
 
-router.post('/session/password-recover', async (req,res)=>{
-    const {body: {email,password},}=req;
-    if(!email || !password){
-        return res.render('error',{title:'log error',messageError:'usuario o contraseña inválidos'});
+)
+
+router.get('/session/profile', StrategyMiddleware('jwt'), (req, res) => {
+    if (!req.user) {
+        res.status(error.statusCode || 500).json({ status: 'error', message })
     }
-    const user= await userModel.findOne({email})
-    if(!user){
-        return res.render('error',{title:'log error',messageError:'usuario o contraseña inválidos'});
+    res.status(200).send(req.user);
+});
+router.get('/session/logout', (req, res) => {
+    res.clearCookie();
+    res.redirect('/login');
+});
+
+router.post('/session/password-recover', async (req, res) => {
+    const { body: { email, password }, } = req;
+    if (!email || !password) {
+        return res.render('error', { title: 'log error', messageError: 'usuario o contraseña inválidos' });
     }
-    user.password= createHash(password);
-    await UsersController.update({_id:user._id},user);
+    const user = await UsersController.getOne({ email });
+    if (!user) {
+        return res.render('error', { title: 'log error', messageError: 'usuario o contraseña inválidos' });
+    }
+    user.password = createHash(password);
+    await UsersController.update({ _id: user._id }, user);
     res.redirect('/login');
 })
 
-router.get('/session/github', passport.authenticate('github',{scope:['user:email']}));
-router.get('/session/github/callback',passport.authenticate('github',{failureRedirect:'/login'}),(req,res)=>{
+router.get('/session/github', passport.authenticate('github', { scope: ['user:email'] }));
+router.get('/session/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
     res.redirect('/profile');
 })
-router.get('/session/current', (req,res)=>{
-    if(!req.session.user){
-        return res.status(401).json({message:'no has iniciado sesión'})
+router.get('/session/current', StrategyMiddleware('jwt'), authMiddleware(['user']), (req, res) => {
+    if (!req.user) {
+        res.status(error.statusCode || 500).json({ status: 'error', message })
     }
-    req.status(200).json(req.session.user)
-})
+    res.status(200).send(req.user);
+});
 
 export default router

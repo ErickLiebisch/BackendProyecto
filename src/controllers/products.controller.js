@@ -32,6 +32,17 @@ export default class ProductController {
             console.log("Producto actualizado")
         }
     }
+    static async reduceProductStock(id,purchase){
+        let product = await ProductsService.getById(id);
+        if (!product) {
+            console.log(" the product with the code " + id + " does not exist");
+            return
+        } else {
+            product.stock=product.stock-purchase;
+           await ProductsService.update({_id:id},product);
+           console.log('product updated succesfully');
+        }
+    }
     static async deleteProductById(id){
         let product= await ProductsService.getById(id);
         if(!product){

@@ -74,13 +74,14 @@ export default class CartsManager{
     }
 
     static async deleteProductFromCart(cid,pid){
-        const cart= await cartModel.findById(id);
+        const cart= await cartModel.findById(cid);
         if(!cart){
             console.log("el carrito no fue encontrado")
         }else{
-           const productToDelete=cart.products.findIndex(pro=>pro.toString()===pid);
+           const productToDelete=cart.products.findIndex(pro=>pro.product.toString()===pid);
             if(productToDelete!==-1){
                 cart.products.splice(productToDelete,1);
+                await cartModel.updateOne({_id:cid},cart);
                 console.log("Producto eliminado")
             }else{
                 console.log("Producto no encontrado")

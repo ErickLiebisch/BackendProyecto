@@ -1,12 +1,16 @@
-import path from 'path';
+import path, { resolve } from 'path';
 import url from 'url';
 import bcrypt from 'bcrypt';
 import config from './config/config.js';
+import JWT from 'jsonwebtoken';
+import passport from 'passport';
+import { error } from 'console';
 const __filename= url.fileURLToPath(import.meta.url);
 export const __dirname=path.dirname(__filename);
 export const URL_BASE='http://localhost:8080'
 export const URI= config.mongoDBURI;
 
+const JWT_SECRET=config.jwt;
 
 export const createHash = (password) =>{
     const result = bcrypt.hashSync(password, bcrypt.genSaltSync(6));
@@ -48,6 +52,18 @@ export const buildResponsePaginatedV= (data) =>{
         nextLink: data.hasNextPage?`${URL_BASE}/products/?page=${data.nextPage}&limit=${data.limit}`: null,
     }
 }
+export const StrategyMiddleware=(strategy)=>(req,res,next)=>{
+    passport.authenticate(strategy,{session:false},function (error,payload,info){
+        if(error){
+            return next(error)
+        }
+        if(!payload){
+            return res.status(401).json({message:info.message?info.message:info.toString()});
+        }
+        req.user=payload;
+        next();
+    })(req,res,next);
+}
 
 export const authMiddleware= roles=>(req,res,next)=>{
     const {user}=req;
@@ -58,4 +74,40 @@ export const authMiddleware= roles=>(req,res,next)=>{
         return res.status(403).json({message:'acceso denegado'});
     }
     next();
+}
+
+export const authToken= async (req,res,next)=>{
+    const accessToken= req.cookies['access_token'];
+    if(!accessToken){
+        return next(new Unauthorized('Unauthorized'));
+    }
+    const payload=await verifyToken(accessToken);
+ if(payload.type!=='authentication'){
+    return next(new Unauthorized('Unauthorized'));
+ }
+    req.user=payload;
+    next();
+}
+
+export const generateToken= (user)=>{
+    const payload={
+        id: user._id,
+        first_Name:user.first_Name,
+        last_Name:user.last_Name,
+        email:user.email,
+        cart:user.cart,
+        role:user.role,
+    }
+    return JWT.sign(payload,JWT_SECRET,{expiresIn:'1h'});
+};
+
+export const verifyToken= (token) =>{
+    return new Promise((resolve)=>{
+        JWT.verify(token,JWT_SECRET, (error,payload)=>{
+            if(error){
+                return resolve(false);
+            }
+            resolve(payload);
+        });
+    });
 }

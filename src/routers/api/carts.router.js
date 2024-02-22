@@ -1,6 +1,8 @@
 import CartsController from "../../controllers/carts.controller.js";
 import ProductController from "../../controllers/products.controller.js";
+import TicketController from "../../controllers/ticket.controller.js";
 import { Router } from "express";
+import { buildResponsePaginated,StrategyMiddleware,authMiddleware } from "../../utils.js";
 
 const router= Router();
 
@@ -29,7 +31,7 @@ router.get('/carts/:cid', async(req,res)=>{
         res.status(200).json(cart);
     }
 })
-router.post('/carts/:cid/product/:pid',async (req,res)=>{
+router.post('/carts/:cid/product/:pid',StrategyMiddleware('jwt'),authMiddleware(['user']),async (req,res)=>{
     const {cid,pid}=req.params;
     const body=req.body;
     //const product= await productmanager.getProductById(parseInt(pid));
@@ -45,27 +47,34 @@ router.post('/carts/:cid/product/:pid',async (req,res)=>{
         res.status(201).json(cart);
     }
 })
-router.put('/carts/:id', async (req,res)=>{
+router.put('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
     const {id}= req.params;
     const {body}=req;
     await CartsController.updateProductsfromCartById(id,body);
     res.status(204).end();
 })
-router.delete('/carts/:id', async (req,res)=>{
+router.delete('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
     const {id}=req.params;
     await CartsController.deleteProductsFromCart(id)
     res._construct(204).end();
 })
-router.delete('/carts/:cid/products/:pid', async (req,res)=>{
+router.delete('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
     const {cid,pid}=req.params;
     await CartsController.deleteProductFromCart(cid,pid);
     res.status(204).end();
 })
-router.put('/carts/:cid/products/:pid', async (req,res)=>{
+router.put('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
     const {cid,pid}=req.params;
     const { body}=req;
     await CartsController.updateQuantityPById(cid,pid,body.quantity)
     res.status(204).end();
 })
+router.post('/carts/:cid/purchase', async (req,res)=>{
+    const {cid}=req.params;
+    await TicketController.createTicket(cid)
+    res.status(204).end;
+   })
+
+
 
 export default router;

@@ -74,19 +74,8 @@ export default class CartsController{
       }
   
       static async deleteProductFromCart(cid,pid){
-          const cart= await CartsService.getById(cid);
-          if(!cart){
-              console.log("el carrito no fue encontrado")
-          }else{
-             const productToDelete=cart.products.findIndex(pro=>pro.toString()===pid);
-              if(productToDelete!==-1){
-                  cart.products.splice(productToDelete,1);
-                  console.log("Producto eliminado")
-              }else{
-                  console.log("Producto no encontrado")
-              }
-          } 
-  
+         const result=await CartsService.deleteProductFromCart(cid,pid);
+         return result;
       }
       static async updateProductsfromCartById(id,data){
           const cart= await CartsService.findById(id);

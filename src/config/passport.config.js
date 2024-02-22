@@ -1,14 +1,34 @@
 import passport from "passport";
 import {Strategy as localStrategy} from "passport-local";
 import {Strategy as GithubStrategy} from "passport-github2";
+import {Strategy as JWTStrategy,ExtractJwt} from "passport-jwt";
 import userModel from "../dao/models/user-model.js";
 import cartModel from "../dao/models/cart-model.js";
 import CartsController from "../controllers/carts.controller.js";
 import UsersController from "../controllers/users.controller.js";
-import { createHash, isValidPassword} from "../utils.js";
+import { createHash, isValidPassword, generateToken} from "../utils.js";
 import config from "./config.js";
 
+const cookieExtractor=(req)=>{
+    let token=null;
+    if(req && req.cookies){
+        token=req.cookies.token;
+    }
+    return token;
+}
+
 export const init= () => {
+    const JWT_SECRET=config.jwt;
+    const jwtOptions={
+        secretOrKey: JWT_SECRET,
+        jwtFromRequest:ExtractJwt.fromExtractors([cookieExtractor]),
+    };
+
+    passport.use('jwt', new JWTStrategy(jwtOptions,(payload,done)=>{
+        return done(null,payload);
+    
+    }))
+    
 const registerOpts ={
     usernameField: 'email',
     passReqToCallback: true,
@@ -43,28 +63,30 @@ passport.use('register', new localStrategy(registerOpts, async (req,email,passwo
     done(null,newUser);
 }));
 
-passport.use('login', new localStrategy({usernameField:'email'},async(email,password,done)=>{
-    const user= await UsersController.getOne({email});
-    if(!user){
-        return done(new Error('correo o contraseña inválidos'));
-    }
-    const pass= isValidPassword(password,user)
-    if(!pass){
-        return done(new Error('correo o contraseña inválidos')); 
-    }
-    done(null,user);
-}));
-passport.serializeUser((user,done)=>{
-   done(null,user._id);
-})
-passport.deserializeUser(async (uid,done)=>{
-    const user= await UsersController.getById(uid);
-    done(null,user);
-});
+
+
+// passport.use('login', new localStrategy({usernameField:'email'},async(email,password,done)=>{
+//     const user= await UsersController.getOne({email});
+//     if(!user){
+//         return done(new Error('correo o contraseña inválidos'));
+//     }
+//     const pass= isValidPassword(password,user)
+//     if(!pass){
+//         return done(new Error('correo o contraseña inválidos')); 
+//     }
+//     done(null,user);
+// }));
+// passport.serializeUser((user,done)=>{
+//    done(null,user._id);
+// })
+// passport.deserializeUser(async (uid,done)=>{
+//     const user= await UsersController.getById(uid);
+//     done(null,user);
+// });
 
 const githubOpts={
     clientID: config.clientID ,
-    clientSecret:'33fa24b9c52be771961701b38408fae6df290a27',
+    clientSecret:config.clientSecret,
     callbackURL:config.callbackURL,
 };
 passport.use('github', new GithubStrategy(githubOpts, async (accesstoken, refreshToken,profile,done)=>{

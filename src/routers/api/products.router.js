@@ -1,6 +1,7 @@
 import ProductController from "../../controllers/products.controller.js";
 import { Router } from "express";
-import { buildResponsePaginated } from "../../utils.js";
+import { buildResponsePaginated,StrategyMiddleware,authMiddleware } from "../../utils.js";
+
 const router= Router();
 
 
@@ -31,14 +32,14 @@ router.get('/products/:id',async (req,res)=>{
     }
 })
 
-router.post('/products',async (req,res)=>{
+router.post('/products',StrategyMiddleware('jwt'),authMiddleware(['admin']),async (req,res)=>{
     const {body}=req;
     //await productmanager.addProduct('producto prueba 12',"Este es un producto prueba",101,["Sin imagen"],"p12",5);
     //const products=await productmanager.getProducts();
     const products= await ProductController.addProduct(body);
     res.status(201).json(products);
 });
-router.put('/products/:id', async (req,res)=>{
+router.put('/products/:id', StrategyMiddleware('jwt'),authMiddleware(['admin']),async (req,res)=>{
     const {id}= req.params;
     const {body}=req;
     
@@ -90,7 +91,7 @@ router.put('/products/:id', async (req,res)=>{
     }
     
 })
-router.delete('/products/:id',async (req,res)=>{
+router.delete('/products/:id',StrategyMiddleware('jwt'),authMiddleware(['admin']),async (req,res)=>{
     const {id}= req.params;
     //await productmanager.deleteProduct(parseInt(id));
     //const products= await productmanager.getProducts();

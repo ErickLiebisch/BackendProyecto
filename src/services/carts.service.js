@@ -22,4 +22,9 @@ export default class CartsService{
         return result;
     
     }
+    static async deleteProductFromCart(cid,pid){
+        const result = await CartsManager.deleteProductFromCart(cid,pid)
+       return result;
+
+    }
 }

@@ -3,6 +3,7 @@ import { Router } from "express";
 import cartModel from "../../dao/models/cart-model.js";
 import CartsController from "../../controllers/carts.controller.js";
 import ProductController from "../../controllers/products.controller.js";
+import { StrategyMiddleware,authMiddleware } from "../../utils.js";
 
 const router= Router();
 
@@ -10,16 +11,19 @@ router.get('/',(req,res)=>{
     res.render('index',{title:'Tiendita de Erick'})
 });
 
-router.get('/chat',(req,res)=>{
+router.get('/chat',StrategyMiddleware('jwt'),authMiddleware(['user']),(req,res)=>{
     res.render('chat',{title:'Chat de clientes'});
 })
 
-router.get('/profile', async (req,res) =>{
+router.get('/profile',StrategyMiddleware('jwt'),async (req,res) =>{
     if(!req.user){
         return res.redirect('/login')
+    }else if(req.user.email==="adminCoder@coder.com"){
+        const products= await ProductController.getProducts();
+        res.render('profile', { products: products.map(pro=>pro.toJSON()), title: 'Welcome back',user:req.user})  
     }else{
         const products = await ProductController.getProducts();
-        res.render('profile', {products: products.map(pro=>pro.toJSON()), title:'Bienvenido/a de vuelta', user:req.user.toJSON()})
+        res.render('profile', {products: products.map(pro=>pro.toJSON()), title:'Bienvenido/a de vuelta', user:req.user})
     }
 })
 
@@ -33,7 +37,7 @@ router.get('/password-recover',(req,res)=>{
     res.render('recover', {title: 'Recover password'});
 
 })
-router.get('/current', async (req,res)=>{
+router.get('/current',StrategyMiddleware('jwt'), async (req,res)=>{
     if(!req.user){
         return res.redirect('/login')
     }else{
@@ -41,9 +45,9 @@ router.get('/current', async (req,res)=>{
         const cart= await CartsController.populate(user.cart);
         if(!cart){
             const products= await ProductController.getProducts();
-            res.render('profile',{products: products.map(pro=>pro.toJSON()), title: 'Bienvenido/a',user:req.user.toJSON()})
+            res.render('profile',{products: products.map(pro=>pro.toJSON()), title: 'Bienvenido/a',user:user})
         }else{
-            res.render('current',{products:cart.products.map(pro=>pro.toJSON()),title:'Tu Carrito de compras',user:user.toJSON(),quantity:cart.quantity})
+            res.render('current',{products:cart.products.map(pro=>pro.toJSON()),title:'Tu Carrito de compras',user:user,quantity:cart.quantity})
         }
     }
 })

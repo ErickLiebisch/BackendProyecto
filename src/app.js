@@ -15,22 +15,24 @@ import { URI } from "./utils.js";
 import passport from "passport";
 import { init as initPassport} from './config/passport.config.js'
 import config from "./config/config.js";
+import cookieParser from "cookie-parser";
 
 const SESSION_SECRET=config.sessionSecret;
 
 const app= express();
 
 
-app.use(session({
-    store:MongoStore.create({
-        mongoUrl:URI,
-        mongoOptions:{},
-        ttl:3600,
-    }),
-    secret: SESSION_SECRET,
-    resave:true,
-    saveUninitialized:true,
-}));
+// app.use(session({
+//     store:MongoStore.create({
+//         mongoUrl:URI,
+//         mongoOptions:{},
+//         ttl:3600,
+//     }),
+//     secret: SESSION_SECRET,
+//     resave:true,
+//     saveUninitialized:true,
+// }));
+app.use(cookieParser())
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname,'../public')));
@@ -39,7 +41,7 @@ app.set('views',path.join(__dirname,'views'));
 app.set('view engine','handlebars');
 initPassport();
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 app.use('/', indexRouter, appRouter, PRouter, CRouter);
 app.use('/api',ProductRouter,CartRouter, sessionRouter);
 
