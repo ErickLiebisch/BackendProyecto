@@ -1,6 +1,6 @@
 import ProductController from "../../controllers/products.controller.js";
 import { Router } from "express";
-import { buildResponsePaginated,StrategyMiddleware,authMiddleware } from "../../utils.js";
+import { buildResponsePaginated,StrategyMiddleware,authMiddleware, generateProduct } from "../../utils.js";
 
 const router= Router();
 
@@ -100,6 +100,17 @@ router.delete('/products/:id',StrategyMiddleware('jwt'),authMiddleware(['admin']
     res.status(204).end();
     
     
+})
+
+router.post('/mockingproducts',async (req,res)=>{
+    let contador = 0;
+    while (contador<100) {
+        await ProductController.addProduct(generateProduct())
+        contador++;
+    }
+    const productos= await ProductController.getProducts();
+    res.status(201).json(productos);
+
 })
     
 

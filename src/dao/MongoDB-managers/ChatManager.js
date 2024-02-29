@@ -1,4 +1,5 @@
 import chatModel from "../models/chat-model.js";
+import { NotFound } from "../../utils.js";
 
 export default class ChatManager{
     static getMessages(criteria={}){
@@ -7,7 +8,7 @@ export default class ChatManager{
     static async getMessageById(id){
         const message= await chatModel.findById(id)
         if(!message){
-            throw new Error('el mensaje no fue encontrado')
+            throw new NotFound('el mensaje no fue encontrado')
         }
         return message;
     }

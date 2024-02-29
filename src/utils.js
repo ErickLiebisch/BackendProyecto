@@ -5,6 +5,7 @@ import config from './config/config.js';
 import JWT from 'jsonwebtoken';
 import passport from 'passport';
 import { error } from 'console';
+import { faker } from '@faker-js/faker';
 const __filename= url.fileURLToPath(import.meta.url);
 export const __dirname=path.dirname(__filename);
 export const URL_BASE='http://localhost:8080'
@@ -111,3 +112,46 @@ export const verifyToken= (token) =>{
         });
     });
 }
+
+export class Exception extends Error{
+    constructor(message,statusCode){
+        super(message);
+        this.statusCode=statusCode;
+    }
+
+   
+}
+export class BadRequestException extends Exception{
+     constructor(message){
+        super(message,400);
+     }   
+}
+
+export class NotFound extends Exception{
+    constructor(message){
+       super(message,404);
+    }   
+}
+export class Unauthorized extends Exception{
+    constructor(message){
+       super(message,401);
+    }   
+}
+export class Forbidden extends Exception{
+    constructor(message){
+       super(message,403);
+    }   
+}
+
+export const generateProduct=() =>{
+    return{
+       title: faker.commerce.productName(),
+       description: faker.lorem.paragraph(),
+       price:faker.commerce.price() ,
+       thumbnail: faker.image.url(),
+       code: faker.string.alphanumeric({length:3}),
+       status: true,
+       stock: faker.number.int({min:1, max:99}),
+       category: faker.commerce.department() ,
+    }
+   };

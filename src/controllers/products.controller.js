@@ -12,7 +12,7 @@ export default class ProductController {
         return product;
     }
     static async addProduct(data){
-        let product= await ProductsService.getById(id);
+        let product= await ProductsService.getById(data._id);
         if(product){
             console.log('El producto ya existe')
         }else if (!data.title || !data.description || !data.price || !data.category || !data.code || !data.stock) {

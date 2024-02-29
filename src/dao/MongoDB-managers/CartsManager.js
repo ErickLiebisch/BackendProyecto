@@ -1,4 +1,5 @@
 import cartModel from "../models/cart-model.js";
+import { NotFound } from "../../utils.js";
 
 export default class CartsManager{
     static async createCart(data){
@@ -15,7 +16,7 @@ export default class CartsManager{
     static async getProductsFromCart(cid){
        const cart= await cartModel.findById(cid)
        if(!cart){
-        console.log("carrito no encontrado")
+        throw new NotFound("carrito no encontrado")
        }else{
         return cart.products
        }
@@ -23,7 +24,7 @@ export default class CartsManager{
     static async addProductsToCart(cid,pid,quantity){
        const cart= await cartModel.findById(cid);
        if(!cart){
-        console.log("carrito no encontrado")
+        throw new NotFound("carrito no encontrado")
        }else{
         const productExists= cart.products.find(pro=>pro.toString()===pid);
         if(!productExists){
@@ -44,7 +45,7 @@ export default class CartsManager{
     static async updateCartById(id,data){
         const cart= await cartModel.findById(id);
         if(!cart){
-            console.log("el carrito no fue encontrado")
+            throw new NotFound("carrito no encontrado")
         }else{
             await cartModel.updateOne({_id:id},{$set: data});
             console.log("carrito actualizo exitosamente")
@@ -53,7 +54,7 @@ export default class CartsManager{
     static async deleteProductsFromCart(id){
         const cart= await cartModel.findById(id);
         if(!cart){
-            console.log("el carrito no fue encontrado")
+            throw new NotFound("carrito no encontrado")
         }else{
             empty= []
             await cartModel.updateOne({_id:id},{products:empty})
@@ -63,7 +64,7 @@ export default class CartsManager{
     static async updateQuantityPById(cid,pid,quantity){
         const cart= await cartModel.findById(cid);
         if(!cart){
-            console.log("el carrito no fue encontrado")
+            throw new NotFound("carrito no encontrado")
         }else{
             const productIndex= cart.products.findIndex(pro=> pro.toString()===pid);
             const product= cart.products[productIndex]
@@ -76,7 +77,7 @@ export default class CartsManager{
     static async deleteProductFromCart(cid,pid){
         const cart= await cartModel.findById(cid);
         if(!cart){
-            console.log("el carrito no fue encontrado")
+            throw new NotFound("carrito no encontrado")
         }else{
            const productToDelete=cart.products.findIndex(pro=>pro.product.toString()===pid);
             if(productToDelete!==-1){
@@ -84,7 +85,8 @@ export default class CartsManager{
                 await cartModel.updateOne({_id:cid},cart);
                 console.log("Producto eliminado")
             }else{
-                console.log("Producto no encontrado")
+                throw new NotFound("Producto no encontrado")
+                
             }
         } 
 
@@ -92,7 +94,7 @@ export default class CartsManager{
     static async updateProductsfromCartById(id,data){
         const cart= await cartModel.findById(id);
         if(!cart){
-            console.log("el carrito no fue encontrado")
+            throw new NotFound("carrito no encontrado")
         }else{
           cart.products=data;
           const newProducts=cart.products;
@@ -103,7 +105,7 @@ export default class CartsManager{
     static async deleteCart(id){
         let cart= await cartModel.findById(id);
         if(!cart){
-            console.log("El carro no fue encontrado")
+            throw new NotFound("carrito no encontrado")
         }else{
             await cartModel.deleteOne({_id:id})
             console.log("carro eliminado")
