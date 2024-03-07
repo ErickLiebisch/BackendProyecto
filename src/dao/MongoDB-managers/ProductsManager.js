@@ -1,5 +1,6 @@
 import productModel from "../models/product-model.js";
 import { BadRequestException,NotFound,Exception } from "../../utils.js";
+import { logger } from "../../config/logger.js";
 
 export default class ProductsManager{
     static getProducts(criteria={}){
@@ -8,7 +9,7 @@ export default class ProductsManager{
     static async getProductById(id){
         const product= await productModel.findById(id);
         if(!product){
-            console.log("no encontrado")
+            logger.warning("no encontrado")
         }
         return product;
     }
@@ -20,7 +21,7 @@ export default class ProductsManager{
             throw new BadRequestException("Por favor llene todos los campos")
         }else{
             const product= await productModel.create(data);
-            console.log("El producto ha sido añadido");
+            logger.info("El producto ha sido añadido");
             return product;
         }    
     }
@@ -30,7 +31,7 @@ export default class ProductsManager{
             throw new NotFound('Producto no encontrado')
         }else{
             await productModel.updateOne({_id:id},{$set:data})
-            console.log("Producto actualizado")
+            logger.info("Producto actualizado")
         }
     }
     static async deleteProductById(id){
@@ -39,7 +40,7 @@ export default class ProductsManager{
             throw new NotFound('Producto no encontrado')
         }else{
             await productModel.deleteOne({_id:id})
-            console.log("Producto eliminado")
+            logger.info("Producto eliminado")
         }
     }
 }

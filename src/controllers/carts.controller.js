@@ -1,4 +1,5 @@
 import CartsService from "../services/carts.service.js";
+import { logger } from "../config/logger.js";
 
 export default class CartsController{
     static async createCart(data){
@@ -15,7 +16,7 @@ export default class CartsController{
       static async getProductsFromCart(cid){
          const cart= await CartsService.getById(cid)
          if(!cart){
-          console.log("carrito no encontrado")
+          logger.warning("carrito no encontrado")
          }else{
           return cart.products
          }
@@ -23,7 +24,7 @@ export default class CartsController{
       static async addProductsToCart(cid,pid,quantity){
          const cart= await CartsService.getById(cid);
          if(!cart){
-          console.log("carrito no encontrado")
+            logger.warning("carrito no encontrado")
          }else{
           const productExists= cart.products.find(pro=>pro.toString()===pid);
           if(!productExists){
@@ -33,7 +34,7 @@ export default class CartsController{
               }
               cart.products.push(newProduct);
               await CartsService.update({_id:cid},cart);
-              console.log('producto añadido exitosamente')
+              logger.info('producto añadido exitosamente')
           }else{
               productExists.quantity= productExists.quantity+ quantity;
               await CartsService.update({_id:cid},cart);
@@ -44,26 +45,26 @@ export default class CartsController{
       static async updateCartById(id,data){
           const cart= await CartsService.getById(id);
           if(!cart){
-              console.log("el carrito no fue encontrado")
+            logger.warning("el carrito no fue encontrado")
           }else{
               await CartsService.update({_id:id},{$set: data});
-              console.log("carrito actualizo exitosamente")
+              logger.info("carrito actualizo exitosamente")
           }
       }
       static async deleteProductsFromCart(id){
           const cart= await CartsService.getById(id);
           if(!cart){
-              console.log("el carrito no fue encontrado")
+              logger.warning("el carrito no fue encontrado")
           }else{
               empty= []
               await CartsService.update({_id:id},{products:empty})
-              console.log("productos eliminados del carrito")
+              logger.info("productos eliminados del carrito")
           }
       }
       static async updateQuantityPById(cid,pid,quantity){
           const cart= await CartsService.getById(cid);
           if(!cart){
-              console.log("el carrito no fue encontrado")
+             logger.warning("el carrito no fue encontrado")
           }else{
               const productIndex= cart.products.findIndex(pro=> pro.toString()===pid);
               const product= cart.products[productIndex]
@@ -80,21 +81,21 @@ export default class CartsController{
       static async updateProductsfromCartById(id,data){
           const cart= await CartsService.findById(id);
           if(!cart){
-              console.log("el carrito no fue encontrado")
+              logger.warning("el carrito no fue encontrado")
           }else{
             cart.products=data;
             const newProducts=cart.products;
             await CartsService.update({_id:id},{products:newProducts})
-            console.log("productos actualizados")
+            logger.info("productos actualizados")
           }
       }  
       static async deleteCart(id){
           let cart= await CartsService.findById(id);
           if(!cart){
-              console.log("El carro no fue encontrado")
+             logger.warning("El carro no fue encontrado")
           }else{
               await CartsService.delete({_id:id})
-              console.log("carro eliminado")
+              logger.info("carro eliminado")
           }
       }
       static async populate(id){

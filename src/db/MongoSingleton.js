@@ -1,20 +1,21 @@
 import config from "../config/config.js";
 import mongoose from "mongoose";
+import { logger } from "../config/logger.js";
 
 const URI= config.mongoDBURI;
 export default class MongoSingleton{
     static #instance;
     constructor(){
         mongoose.connect(URI,{})
-        .then(()=>console.log("conectado a la base de datos"))
+        .then(()=>logger.info("conectado a la base de datos"))
         .catch((error)=>console.log(error.message));
     }
     static getInstance(){
         if(MongoSingleton.#instance){
-            console.log('ya existe una instacia de MongoSingleton')
+            logger.warning('ya existe una instacia de MongoSingleton')
             return MongoSingleton.#instance;
         }else{
-            console.log("creando instancia")
+            logger.info("creando instancia")
             MongoSingleton.#instance=new MongoSingleton();
         }
     }

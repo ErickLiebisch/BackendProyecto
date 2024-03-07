@@ -1,4 +1,5 @@
 import ChatsService from "../services/chats.service.js";
+import { logger } from "../config/logger.js";
 
 
 export default class ChatsController{
@@ -14,16 +15,16 @@ export default class ChatsController{
     }
     static async sendMessage(data){
         const message= await ChatsService.create(data);
-        console.log('El mensaje fue enviado')
+        logger.info('El mensaje fue enviado')
         return message;
 
     }
     static async updateMessage(id,data){
         await ChatsService.update({_id:id},{$set:data});
-        console.log("mensaje actualizado exitosamente");
+        logger.info("mensaje actualizado exitosamente");
     }
     static async deleteMessage(id){
         await ChatsService.delete({_id:id});
-        console.log("mensaje borrado exitosamente");
+        logger.info("mensaje borrado exitosamente");
     }
 }

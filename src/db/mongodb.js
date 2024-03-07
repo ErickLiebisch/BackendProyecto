@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { URI } from "../utils.js";
+import { logger } from "../config/logger.js";
 export const initMongoDB= async ()=>{
     try {
        await mongoose.connect(URI)
-       console.log('Conectado a base de datos') 
+       logger.info('Conectado a base de datos') 
     } catch (error) {
-        console.log('Un error inesperado ocurrió')
+        logger.error('Un error inesperado ocurrió')
     }
 }

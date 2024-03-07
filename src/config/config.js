@@ -11,4 +11,5 @@ export default {
     jwt: process.env.JWT_SECRET || '',
     persistence: process.env.PERSISTENCE || 'mongodb',
     clientSecret: process.env.CLIENT_SECRET || '',
+    env:process.env.NODE_ENV || 'development',
 }

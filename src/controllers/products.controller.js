@@ -1,4 +1,5 @@
 import ProductsService from "../services/products.service.js";
+import { logger } from "../config/logger.js";
 
 export default class ProductController {
     static getProducts(filter={}){
@@ -14,42 +15,42 @@ export default class ProductController {
     static async addProduct(data){
         let product= await ProductsService.getById(data._id);
         if(product){
-            console.log('El producto ya existe')
+            logger.warning('El producto ya existe')
         }else if (!data.title || !data.description || !data.price || !data.category || !data.code || !data.stock) {
-            console.log("Por favor llene todos los campos")
+            logger.error("Por favor llene todos los campos")
         }else{
             const product= await ProductsService.create(data);
-            console.log("El producto ha sido añadido");
+            logger.info("El producto ha sido añadido");
             return product;
         }    
     }
     static async updateProductById(id,data){
         let product= await ProductsService.getById(id);
         if(!product){
-            console.log("El producto no fue encontrado")
+            logger.warning("El producto no fue encontrado")
         }else{
             await ProductsService.update(id,data)
-            console.log("Producto actualizado")
+            logger.info("Producto actualizado")
         }
     }
     static async reduceProductStock(id,purchase){
         let product = await ProductsService.getById(id);
         if (!product) {
-            console.log(" the product with the code " + id + " does not exist");
+           logger.warning(" El producto con codigo " + id + " no existe");
             return
         } else {
             product.stock=product.stock-purchase;
            await ProductsService.update({_id:id},product);
-           console.log('product updated succesfully');
+           logger.info('product updated succesfully');
         }
     }
     static async deleteProductById(id){
         let product= await ProductsService.getById(id);
         if(!product){
-            console.log("El producto no fue encontrado")
+           logger.warning("El producto no fue encontrado")
         }else{
             await ProductsService.delete(id);
-            console.log("Producto eliminado")
+            logger.info("Producto eliminado")
         }
     }
     static async paginate(criteria,options){

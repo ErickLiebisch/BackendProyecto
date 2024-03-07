@@ -1,5 +1,6 @@
 import chatModel from "../models/chat-model.js";
 import { NotFound } from "../../utils.js";
+import { logger } from "../../config/logger.js";
 
 export default class ChatManager{
     static getMessages(criteria={}){
@@ -14,17 +15,17 @@ export default class ChatManager{
     }
     static async sendMessage(data){
         const message= await chatModel.create(data);
-        console.log('El mensaje fue enviado')
+        logger.info('El mensaje fue enviado')
         return message;
 
     }
     static async updateMessage(id,data){
         await chatModel.updateOne({_id:id},{$set:data});
-        console.log("mensaje actualizado exitosamente");
+        logger.info("mensaje actualizado exitosamente");
     }
     static async deleteMessage(id){
         await chatModel.deleteOne({_id:id});
-        console.log("mensaje borrado exitosamente");
+        logger.info("mensaje borrado exitosamente");
     }
 
 }

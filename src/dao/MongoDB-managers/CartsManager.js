@@ -1,10 +1,11 @@
 import cartModel from "../models/cart-model.js";
 import { NotFound } from "../../utils.js";
+import { logger } from "../../config/logger.js";
 
 export default class CartsManager{
     static async createCart(data){
       const cart= await cartModel.create(data);
-      console.log("Carro creado exitosamente")
+      logger.info("Carro creado exitosamente")
       return cart;
     }
     static getCarts(criteria={}) {
@@ -34,7 +35,7 @@ export default class CartsManager{
             }
             cart.products.push(newProduct);
             await cartModel.updateOne({_id:cid},cart);
-            console.log('producto añadido exitosamente')
+            logger.info('producto añadido exitosamente')
         }else{
             productExists.quantity= productExists.quantity+ quantity;
             await cartModel.updateOne({_id:cid},cart);
@@ -48,7 +49,7 @@ export default class CartsManager{
             throw new NotFound("carrito no encontrado")
         }else{
             await cartModel.updateOne({_id:id},{$set: data});
-            console.log("carrito actualizo exitosamente")
+            logger.info("carrito actualizo exitosamente")
         }
     }
     static async deleteProductsFromCart(id){
@@ -58,7 +59,7 @@ export default class CartsManager{
         }else{
             empty= []
             await cartModel.updateOne({_id:id},{products:empty})
-            console.log("productos eliminados del carrito")
+            logger.info("productos eliminados del carrito")
         }
     }
     static async updateQuantityPById(cid,pid,quantity){
@@ -83,7 +84,7 @@ export default class CartsManager{
             if(productToDelete!==-1){
                 cart.products.splice(productToDelete,1);
                 await cartModel.updateOne({_id:cid},cart);
-                console.log("Producto eliminado")
+                logger.info("Producto eliminado")
             }else{
                 throw new NotFound("Producto no encontrado")
                 
@@ -99,7 +100,7 @@ export default class CartsManager{
           cart.products=data;
           const newProducts=cart.products;
           await cartModel.updateOne({_id:id},{products:newProducts})
-          console.log("productos actualizados")
+          logger.info("productos actualizados")
         }
     }  
     static async deleteCart(id){
@@ -108,7 +109,7 @@ export default class CartsManager{
             throw new NotFound("carrito no encontrado")
         }else{
             await cartModel.deleteOne({_id:id})
-            console.log("carro eliminado")
+            logger.info("carro eliminado")
         }
     }
 
