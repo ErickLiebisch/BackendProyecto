@@ -10,6 +10,7 @@ import PRouter from "./routers/views/products.router.js"
 import CRouter from "./routers/views/carts.router.js"
 import sessionRouter from "./routers/api/session.router.js"
 import appR from "./routers/api/app.router.js"
+import userRouter from "./routers/api/users.router.js"
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { URI } from "./utils.js";
@@ -47,7 +48,7 @@ initPassport();
 app.use(passport.initialize());
 // app.use(passport.session());
 app.use('/', indexRouter, appRouter, PRouter, CRouter);
-app.use('/api',ProductRouter,CartRouter, sessionRouter,appR);
+app.use('/api',ProductRouter,CartRouter, sessionRouter,appR,userRouter);
 app.use((error,req,res,next)=>{
     const message = error instanceof Exception ? error.message:`An unexpected error has ocurred`;
     req.logger.error(message)

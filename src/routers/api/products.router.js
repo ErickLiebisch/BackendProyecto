@@ -32,11 +32,14 @@ router.get('/products/:id',async (req,res)=>{
     }
 })
 
-router.post('/products',StrategyMiddleware('jwt'),authMiddleware(['admin']),async (req,res)=>{
+router.post('/products',StrategyMiddleware('jwt'),authMiddleware(['admin','premium']),async (req,res)=>{
     const {body}=req;
     //await productmanager.addProduct('producto prueba 12',"Este es un producto prueba",101,["Sin imagen"],"p12",5);
     //const products=await productmanager.getProducts();
     const products= await ProductController.addProduct(body);
+    if(user.role==="premium"){
+        await ProductController.updateOwner(products._id,user.email);
+    }
     res.status(201).json(products);
 });
 router.put('/products/:id', StrategyMiddleware('jwt'),authMiddleware(['admin']),async (req,res)=>{
@@ -91,14 +94,30 @@ router.put('/products/:id', StrategyMiddleware('jwt'),authMiddleware(['admin']),
     }
     
 })
-router.delete('/products/:id',StrategyMiddleware('jwt'),authMiddleware(['admin']),async (req,res)=>{
+router.delete('/products/:id',StrategyMiddleware('jwt'),authMiddleware(['admin','premium']),async (req,res)=>{
     const {id}= req.params;
     //await productmanager.deleteProduct(parseInt(id));
     //const products= await productmanager.getProducts();
     //res.status(200).json(products);
-    await ProductController.deleteProductById(id);
-    res.status(204).end();
-    
+
+    const product= await ProductController.getProductById(id)
+        if (!product) {
+            res.status(error.statusCode || 500).json({status:'error',message})
+        } else if(user.role==="premium" && product.owner===user.email){
+            //await productmanager.deleteProduct(parseInt(productId));
+            //res.status(200).json({message:'the following product was deleted',productId});
+            await ProductController.deleteProductById(id);
+            res.status(204).end();
+        } else if(user.role==="premium" && product.owner!==user.email){
+            req.logger.error('error cannot delete product')
+        }else if(user.role==="admin"){
+            await ProductController.deleteProductById(id);
+            res.status(204).end();
+
+        }else{
+            req.logger.error('error cannot delete product')
+        }
+
     
 })
 

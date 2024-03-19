@@ -31,7 +31,7 @@ router.get('/carts/:cid', async(req,res)=>{
         res.status(200).json(cart);
     }
 })
-router.post('/carts/:cid/product/:pid',StrategyMiddleware('jwt'),authMiddleware(['user']),async (req,res)=>{
+router.post('/carts/:cid/product/:pid',StrategyMiddleware('jwt'),authMiddleware(['user','premium']),async (req,res)=>{
     const {cid,pid}=req.params;
     const body=req.body;
     //const product= await productmanager.getProductById(parseInt(pid));
@@ -40,30 +40,30 @@ router.post('/carts/:cid/product/:pid',StrategyMiddleware('jwt'),authMiddleware(
     const cart= await CartsController.getProductsFromCart(cid)
     if(!product || !cart){
         res.status(404).json('product or cart not found')
-    }else{
-        //await cartmanager.addProductsToCart(parseInt(cid),parseInt(pid),body.quantity);
-        //const cartUpdated= await cartmanager.getProductsFromCart(parseInt(cid));
-        await CartsController.addProductsToCart(cid,pid,body.quantity);
-        res.status(201).json(cart);
-    }
+    }else if(user.role==="premium" && product.owner!==user.email){
+        req.logger.error('error cannot add products of the same owner as cart')
+     }else{
+         await CartsController.addProductsToCart(cid,pid,body.quantity);
+         res.status(201).json(cart);
+     }
 })
-router.put('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
+router.put('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {id}= req.params;
     const {body}=req;
     await CartsController.updateProductsfromCartById(id,body);
     res.status(204).end();
 })
-router.delete('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
+router.delete('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {id}=req.params;
     await CartsController.deleteProductsFromCart(id)
     res._construct(204).end();
 })
-router.delete('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
+router.delete('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {cid,pid}=req.params;
     await CartsController.deleteProductFromCart(cid,pid);
     res.status(204).end();
 })
-router.put('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user']), async (req,res)=>{
+router.put('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {cid,pid}=req.params;
     const { body}=req;
     await CartsController.updateQuantityPById(cid,pid,body.quantity)

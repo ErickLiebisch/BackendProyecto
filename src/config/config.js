@@ -12,4 +12,8 @@ export default {
     persistence: process.env.PERSISTENCE || 'mongodb',
     clientSecret: process.env.CLIENT_SECRET || '',
     env:process.env.NODE_ENV || 'development',
+    emailUser: process.env.EMAIL_USER || 'user',
+    emailPass: process.env.EMAIL_PASSWORD || 'password',
+    emailService: process.env.EMAIL_SERVICE || 'service',
+    emailPort: process.env.EMAIL_PORT || 'eport',
 }

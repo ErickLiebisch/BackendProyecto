@@ -56,4 +56,17 @@ export default class ProductController {
     static async paginate(criteria,options){
         return ProductsService.paginate(criteria,options);
     }
+    static async updateOwner(pid,owner="adminCoder@coder.com"){
+        let product = await ProductModel.findById(pid);
+        if (!product) {
+            logger.warning(" the product with the code " + pid + " does not exist");
+            return
+        } else if (!data.title || !data.description || !data.price || !data.thumbnail || !data.stock || !data.category) {
+            throw new BadRequestException('Please fill all entries')
+        } else {
+           await ProductModel.updateOne({_id:pid},{owner: owner})
+           logger.info('product owner updated succesfully');
+        }
+
+    }
 }

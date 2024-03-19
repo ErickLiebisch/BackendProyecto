@@ -90,7 +90,7 @@ export const authToken= async (req,res,next)=>{
     next();
 }
 
-export const generateToken= (user)=>{
+export const generateToken= (user,type='authentication') =>{
     const payload={
         id: user._id,
         first_Name:user.first_Name,
@@ -98,9 +98,11 @@ export const generateToken= (user)=>{
         email:user.email,
         cart:user.cart,
         role:user.role,
+        type,
     }
     return JWT.sign(payload,JWT_SECRET,{expiresIn:'1h'});
 };
+
 
 export const verifyToken= (token) =>{
     return new Promise((resolve)=>{
@@ -111,6 +113,7 @@ export const verifyToken= (token) =>{
             resolve(payload);
         });
     });
+    
 }
 
 export class Exception extends Error{

@@ -1,7 +1,6 @@
 <h1>Recover password</h1>
 <article>
-<form action="/api/session/password-recover" method="post">
-<input id="log-email" type="email" name="email" placeholder="Enter your E-mail" required>
+<form action="/api/session/password-recover/?token={{token}}" method="post">
 <input id="log-password" type="text" name="password" placeholder="Enter your password" required>
 <input type="submit" value="Log-in">
 <a href="/login">Log-in</a>

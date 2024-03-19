@@ -3,7 +3,8 @@ import { Router } from "express";
 import cartModel from "../../dao/models/cart-model.js";
 import CartsController from "../../controllers/carts.controller.js";
 import ProductController from "../../controllers/products.controller.js";
-import { StrategyMiddleware,authMiddleware } from "../../utils.js";
+import { StrategyMiddleware,authMiddleware, verifyToken } from "../../utils.js";
+import { error } from "console";
 
 const router= Router();
 
@@ -33,10 +34,7 @@ router.get('/login', async (req,res)=>{
 router.get('/register', async (req,res)=>{
     res.render('register',{title:'Registro'})
 })
-router.get('/password-recover',(req,res)=>{
-    res.render('recover', {title: 'Recover password'});
 
-})
 router.get('/current',StrategyMiddleware('jwt'), async (req,res)=>{
     if(!req.user){
         return res.redirect('/login')
@@ -52,5 +50,18 @@ router.get('/current',StrategyMiddleware('jwt'), async (req,res)=>{
     }
 })
 
+router.get('/password-recover',async (req,res)=>{
+    const {token}=req.query;
+    verifyToken(token)
+    .then((userT)=>{
+        res.render('recover',{token,title:'Recover password'});
+    }).catch((error)=>{
+        return res.redirect('/login')
+    })
+})
+
+router.get('/password-change',(req,res)=>{
+    res.render('forgot',{title: 'Change Password'});
+})
 
 export default router;
