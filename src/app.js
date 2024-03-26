@@ -20,6 +20,8 @@ import config from "./config/config.js";
 import cookieParser from "cookie-parser";
 import { addLogger } from "./config/logger.js";
 import { logger } from "./config/logger.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from 'swagger-ui-express';
 
 const SESSION_SECRET=config.sessionSecret;
 
@@ -55,6 +57,19 @@ app.use((error,req,res,next)=>{
     res.status(500).json({message});
 
 });
+const swaggerOptions= {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Tiendita de Erick API',
+            description: ' Esta es la documentacion API para la tiendita virtual de Erick',
+
+        },
+    },
+    apis: [path.join(__dirname,'..','docs','**','*yaml')],
+};
+const specs= swaggerJSDoc(swaggerOptions);
+app.use('/api-docs',swaggerUiExpress.serve,swaggerUiExpress.setup(specs));
 
 // app.listen(PORT, ()=>{
 //     console.log(`Server running in http://localhost:${PORT}`);

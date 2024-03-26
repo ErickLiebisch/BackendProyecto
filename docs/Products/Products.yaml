@@ -1,0 +1,302 @@
+paths:
+  /api/products:
+    get:
+      summary: returns product list
+      tags:
+        - Products
+      responses:
+        200:
+          descripion: products obtained from database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        500:
+          description: Server internal error.
+    post:
+      summary: creates product in database.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/createProduct'
+      responses:
+        201:
+          description: Product created successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Product'        
+
+        404:
+          description: Product not found.
+        500:
+          description: Server internal error.
+  /api/products/{productId}:
+    get:
+      summary: returns product by its id.
+      tags:
+        - Products
+      parameters:
+      - in: path
+        name: productId
+        required: true
+        description: Id of the desired product.
+        schema:
+          type: string
+      responses:
+        200:
+          description: Product obtained successfully from database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Product'
+        404:
+          description: Product not found.
+        500:
+          description: Server internal error.
+    put:
+      summary: updates product by its id.
+      tags:
+        - Products
+      parameters:
+      - in: path
+        name: productId
+        required: true
+        description: Id of the desired product.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateProduct'
+      responses:
+        200:
+          description: Product updated successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Product'        
+
+        404:
+          description: Product not found.
+        500:
+          description: Server internal error.
+    delete:
+      summary: deletes product by its id.
+      tags:
+        - Products
+      parameters:
+      - in: path
+        name: productId
+        required: true
+        description: Id of the desired product.
+        schema:
+          type: string
+      responses:
+        200:
+          description: Product deleted successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Product'        
+
+        404:
+          description: Product not found.
+        500:
+          description: Server internal error.
+  /api/mockingProducts:
+    post:
+      summary: generates 100 products in database
+      tags:
+        - Products
+      responses:
+        201:
+          descripion: products created in database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        500:
+          description: Server internal error.
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Product's id in database
+        title:
+          type: string
+          description: Product's name
+        description:
+          type: string
+          description: Product's description
+        price:
+          type: number
+          description: Product's price  
+        thumbnail:
+          type: array
+          items:
+          description: List of product's images  
+        code:
+          type: string
+          description: Product's code
+        status:
+          type: boolean
+          description: Product current status
+        stock: 
+          type: number
+          description: Product's stock 
+        category:
+          type: string
+          description: Category of the product 
+        owner:
+          type: string
+          description: Product's owner email
+
+      example:
+        _id: 1233445566ab23cd
+        title: apple
+        description: this is a red apple
+        price: 1
+        thumbnail: []
+        code: a111
+        status: true
+        stock: 1
+        category: fruits
+        owner: admin@mail.com
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product's name
+        description:
+          type: string
+          description: Product's description
+        price:
+          type: number
+          description: Product's price  
+        thumbnail:
+          type: array
+          items:
+          description: List of product's images  
+        code:
+          type: string
+          description: Product's code
+        status:
+          type: boolean
+          description: Product current status
+        stock: 
+          type: number
+          description: Product's stock 
+        category:
+          type: string
+          description: Category of the product 
+        owner:
+          type: string
+          description: Product's owner email
+      example:
+        title: apple
+        description: this is a red apple
+        price: 1
+        thumbnail: []
+        code: a111
+        status: true
+        stock: 1
+        category: fruits
+        owner: admin@mail.com
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product's name
+        description:
+          type: string
+          description: Product's description
+        price:
+          type: number
+          description: Product's price  
+        thumbnail:
+          type: array
+          items:
+          description: List of product's images  
+        code:
+          type: string
+          description: Product's code
+        status:
+          type: boolean
+          description: Product current status
+        stock: 
+          type: number
+          description: Product's stock 
+        category:
+          type: string
+          description: Category of the product 
+        owner:
+          type: string
+          description: Product's owner email
+      example:
+        title: apple
+        description: this is a red apple
+        price: 1
+        thumbnail: []
+        code: a111
+        status: true
+        stock: 1
+        category: fruits
+        owner: admin@mail.com        

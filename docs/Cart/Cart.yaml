@@ -1,0 +1,354 @@
+paths:
+  /api/carts:
+    get:
+      summary: returns carts list
+      tags:
+        - Cart
+      responses:
+        200:
+          descripion: Carts obtained from database.
+        500:
+    post:
+      summary: creates Cart in database.
+      tags:
+        - Cart
+      responses:
+        201:
+          description: Cart created successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'        
+
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+  /api/carts/{cid}:
+    get:
+      summary: returns Cart by its id.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: cid
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      responses:
+        200:
+          description: Cart obtained successfully from database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+    put:
+      summary: updates Cart by its id.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: CartId
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateCart'
+      responses:
+        200:
+          description: Cart updated successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'        
+
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+    delete:
+      summary: deletes Cart by its id.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: CartId
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      responses:
+        200:
+          description: Cart deleted successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'        
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: adds product to cart by ids.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: cid
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      - in: path
+        name: pid
+        required: true
+        description: Id of the desired product.
+        schema:
+          type: string
+      responses:
+        200:
+          description: product added successfully to cart.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+    put:
+      summary: updates product quantity in cart by its id.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: cid
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      - in: path
+        name: pid
+        required: true
+        description: Id of the desired product.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateQuantity'
+      responses:
+        200:
+          description: Cart updated successfully in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'        
+
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+    delete:
+      summary: deletes product by id in cart.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: CartId
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      - in: path
+        name: pid
+        required: true
+        description: Id of the desired product.
+        schema:
+          type: string
+      responses:
+        200:
+          description: product deleted successfully from cart.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'        
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.  
+  /api/carts/{cid}/purchase:
+    post:
+      summary: creates shop ticket.
+      tags:
+        - Cart
+      parameters:
+      - in: path
+        name: cid
+        required: true
+        description: Id of the desired Cart.
+        schema:
+          type: string
+      responses:
+        200:
+          description: Ticket created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: response status
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Ticket'
+        404:
+          description: Cart not found.
+        500:
+          description: Server internal error.
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Cart's id in database
+        customer:
+          type: string
+          description: customer (email) of the cart
+        products:
+          type: array
+          description: Products in cart  
+
+      example:
+        _id: 38yrgpg83th90e
+        customer: fulano@mail
+        products: []
+    Ticket:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Ticket's id in database
+        code:
+          type: string
+          description: Ticket's code
+        products:
+          type: array
+          description: purchased products
+        purchaser:
+          type: string
+          description: Purchaser's email
+       
+
+      example:
+        _id: 1233445566ab23cd
+        code: 1354657
+        products: []
+        amount: 1
+        purchaser: aaaa@mail.com
+  requestBodies:
+    updateCart:
+      type: object
+      properties:
+        customer:
+          type: string
+          description: Customer (email) of the cart
+        products:
+          type: array
+          description: products in cart
+      example:
+        customer: Mengano
+        products: []
+    updateQuantity:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: newproduct quantity
+      example:
+        quantity: 1
