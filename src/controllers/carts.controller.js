@@ -8,7 +8,7 @@ export default class CartsController{
         return cart;
       }
       static getCarts(criteria={}) {
-         return CartsService.find(criteria);
+         return CartsService.getAll(criteria);
       }
       static getCartById(id){
           return CartsService.getById(id);

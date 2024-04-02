@@ -1,5 +1,5 @@
 import ProductsManager from "../dao/MongoDB-managers/ProductsManager.js";
-
+import productModel from "../dao/models/product-model.js";
 export default class ProductsService{
     static async getAll(filter={}){
         return ProductsManager.getProducts(filter);

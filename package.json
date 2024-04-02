@@ -36,5 +36,10 @@
     "dev": "nodemon --exec node -r dotenv/config ."
   },
   "author": "erick",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "mocha": "^10.4.0",
+    "supertest": "^6.3.4"
+  }
 }
