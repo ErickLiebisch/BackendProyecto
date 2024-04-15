@@ -63,6 +63,7 @@ router.post('/session/login', async (req, res) => {
             password: password,
             age: 26,
             role: 'admin',
+            last_Connection: Date.now(),
         }
     } else {
 
@@ -74,7 +75,7 @@ router.post('/session/login', async (req, res) => {
         if (!pass) {
             return new Error('invalid email or password');
         }
-
+        await userModel.updateOne({ _id: user._id }, { last_Connection: Date.now() });
         const token = generateToken(user);
         res.cookie('token', token, {
             maxAge: 1000 * 60,
@@ -92,7 +93,9 @@ router.get('/session/profile', StrategyMiddleware('jwt'), (req, res) => {
     }
     res.status(200).send(req.user);
 });
-router.get('/session/logout', (req, res) => {
+router.get('/session/logout',StrategyMiddleware('jwt'), async (req, res) => {
+    const user= req.user;
+    await userModel.updateOne({ _id: user._id }, { last_Connection: Date.now() });
     res.clearCookie();
     res.redirect('/login');
 });

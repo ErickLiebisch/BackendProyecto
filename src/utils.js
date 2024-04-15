@@ -6,6 +6,7 @@ import JWT from 'jsonwebtoken';
 import passport from 'passport';
 import { error } from 'console';
 import { faker } from '@faker-js/faker';
+import multer from 'multer';
 const __filename= url.fileURLToPath(import.meta.url);
 export const __dirname=path.dirname(__filename);
 export const URL_BASE='http://localhost:8080'
@@ -158,3 +159,31 @@ export const generateProduct=() =>{
        category: faker.commerce.department() ,
     }
    };
+
+   const storage= multer.diskStorage({
+    destination: (req,file,callback) =>{
+        const {params: { typeFile }}=req;
+        let folderPath=null;
+        switch (typeFile){
+            case 'profiles':
+            folderPath=path.resolve(__dirname,'..','..','public','image','profiles');
+            break
+            case 'products':
+                folderPath=path.resolve(__dirname,'..','..','public','image','products');
+            break
+            case 'documents':
+                folderPath=path.resolve(__dirname,'..','..','public','documents');
+            break
+            default:
+                return callback(new BadRequestException('Invalid type file'))
+        }
+       fs.mkdirSync(folderPath,{recursive: true});
+       callback(null,folderPath);
+    },
+    filename: (req,file,callback) =>{
+        const {user:{id}}=req;
+        callback(null, `${id}_${file.originalname}`);
+    },
+});
+
+export const uploader= multer({storage});
