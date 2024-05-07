@@ -30,6 +30,20 @@ export default class EmailService {
         <a href=${link}>Cambiar contraseña</a>`
         )
     }
+    sendDeleteEmail(user,product){
+        return this.sendEmail(
+            user.email,
+        `El producto ${product.title} fue eliminado` ,
+        `<p>Tu producto ya no se encuentra en la tiendita de erick.</p>`
+        )
+    }
+    sendOrderEmail(user){
+        return this.sendEmail(
+            user.email,
+        `Pedido confirmado` ,
+        `<p>los productos seran enviados a donde solicite.</p>`
+        )
+    }
     static getInstance(){
         if(!EmailService.#instance){
             EmailService.#instance= new EmailService();

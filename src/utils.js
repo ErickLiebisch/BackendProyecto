@@ -72,7 +72,7 @@ export const authMiddleware= roles=>(req,res,next)=>{
     if(!user){
         return res.status(401).json({message:'no autorizado'});
     }
-    if(!roles.include(user.role)){
+    if(!roles.includes(user.role)){
         return res.status(403).json({message:'acceso denegado'});
     }
     next();

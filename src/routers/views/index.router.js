@@ -23,8 +23,10 @@ router.get('/profile',StrategyMiddleware('jwt'),async (req,res) =>{
         const products= await ProductController.getProducts();
         res.render('profile', { products: products.map(pro=>pro.toJSON()), title: 'Welcome back',user:req.user})  
     }else{
-        const products = await ProductController.getProducts();
-        res.render('profile', {products: products.map(pro=>pro.toJSON()), title:'Bienvenido/a de vuelta', user:req.user})
+        const user= req.user;
+        const cartId=user.cart.toString();
+        const products=  await ProductController.getProducts();
+        res.render('profile', { products: products.map(pro=>pro.toJSON()), title: 'Welcome back',user:user})
     }
 })
 
@@ -62,6 +64,24 @@ router.get('/password-recover',async (req,res)=>{
 
 router.get('/password-change',(req,res)=>{
     res.render('forgot',{title: 'Change Password'});
+})
+
+router.get('/purchase',async (req,res)=>{
+    if(!req.user){
+        return res.redirect('/current')
+    }else{
+        const user= req.user;
+        const cartId=user.cart;
+        const cart= await cartModel.findOne({_id:cartId}).populate('products.product');
+        const ticket = await TicketController.createTicket(cartId)
+        if(!cart){
+        const products= await PM.getProducts(); 
+        res.render('profile', { products: products.map(pro=>pro.toJSON()), title: 'Welcome back',user:req.user,cart:cart.toJSON() })
+        }else{
+        res.render('ticket', {  products: ticket.products.map(pro=>pro.toJSON()), title: 'Your Ticket',user:user,amount:ticket.amount,code:ticket.code})
+        }
+        
+    }   
 })
 
 export default router;

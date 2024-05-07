@@ -1,31 +1,37 @@
-<h1>Carrito</h1>
+<h1>Cart from: {{customer}}</h1>
 <article>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Thumbnail</th>
-        <th>Code</th>
-        <th>Stock</th>
-        <th>Category</th>
-        <th>Quantity</th>
-    </tr>
-    <tr>
-        
-        {{#each products}}
-            <tr>
-                <td>{{product.title}}</td>
-                <td>{{product.description}}</td>
-                <td>{{product.price}}</td>
-                <td>{{product.thumbnail}}</td>
-                <td>{{product.code}}</td>
-                <td>{{product.stock}}</td>
-                <td>{{product.category}}</td>
-                <td>{{quantity}}</td>
-            </tr>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Thumbnail</th>
+            <th>Code</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Delete Product</th>
+        </tr>
+        <tr>
+
+            {{#each products}}
+        <tr>
+            <td>{{product.title}}</td>
+            <td>{{product.description}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.thumbnail}}</td>
+            <td>{{product.code}}</td>
+            <td>{{product.stock}}</td>
+            <td>{{product.category}}</td>
+            <td>{{quantity}}</td>
+            <td>
+                <form action="/api/carts/{{../user.cart}}/products/{{product._id}}" method="delete">
+                    <input type="submit" value="delete">
+                </form>
+            </td>
+        </tr>
         {{/each}}
-        
-    </tr>
-</table>
+
+        </tr>
+    </table>
 </article>

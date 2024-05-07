@@ -3,6 +3,8 @@ import ProductController from "../../controllers/products.controller.js";
 import TicketController from "../../controllers/ticket.controller.js";
 import { Router } from "express";
 import { buildResponsePaginated,StrategyMiddleware,authMiddleware } from "../../utils.js";
+import EmailService from "../../services/email.service.js";
+import UsersController from "../../controllers/users.controller.js";
 
 const router= Router();
 
@@ -34,18 +36,24 @@ router.get('/carts/:cid', async(req,res)=>{
 router.post('/carts/:cid/product/:pid',StrategyMiddleware('jwt'),authMiddleware(['user','premium']),async (req,res)=>{
     const {cid,pid}=req.params;
     const body=req.body;
+    const user= await UsersController.getOne({cart:cid});
     //const product= await productmanager.getProductById(parseInt(pid));
     //const cart= await cartmanager.getProductsFromCart(parseInt(cid));
     const product= await ProductController.getProductById(pid);
-    const cart= await CartsController.getProductsFromCart(cid)
-    if(!product || !cart){
-        res.status(404).json('product or cart not found')
-    }else if(user.role==="premium" && product.owner!==user.email){
-        req.logger.error('error cannot add products of the same owner as cart')
-     }else{
-         await CartsController.addProductsToCart(cid,pid,body.quantity);
-         res.status(201).json(cart);
-     }
+    const cart= await CartsController.getProductsFromCart(cid);
+    if(!product){
+       res.status(error.statusCode || 500).json({status:'error',message})
+    }else{
+        if(!cart){
+           res.status(error.statusCode || 500).json({status:'error',message})
+        }else if(user.role==="premium" && product.owner!==user.email){
+           req.logger.error('error cannot add products of the same owner as cart')
+        }else{
+            //await cartsmanager.addProductsToCart(parseInt(cid), parseInt(pid) ,body.quantity);
+            await CartsController.addProductsToCart(cid,pid,body.quantity);
+            res.redirect('/current')
+        }
+    }
 })
 router.put('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {id}= req.params;
@@ -56,7 +64,7 @@ router.put('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user','premiu
 router.delete('/carts/:id',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {id}=req.params;
     await CartsController.deleteProductsFromCart(id)
-    res._construct(204).end();
+    res.redirect('/current')
 })
 router.delete('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {cid,pid}=req.params;
@@ -69,10 +77,12 @@ router.put('/carts/:cid/products/:pid',StrategyMiddleware('jwt'),authMiddleware(
     await CartsController.updateQuantityPById(cid,pid,body.quantity)
     res.status(204).end();
 })
-router.post('/carts/:cid/purchase', async (req,res)=>{
+router.post('/carts/:cid/purchase',StrategyMiddleware('jwt'),authMiddleware(['user','premium']), async (req,res)=>{
     const {cid}=req.params;
     await TicketController.createTicket(cid)
-    res.status(204).end;
+    const emailService = EmailService.getInstance();
+    emailService.sendOrderEmail(req.user);
+    res.redirect('/purchase');
    })
 
 

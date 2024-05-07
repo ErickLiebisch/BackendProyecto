@@ -1,43 +1,61 @@
-<h1>Productos</h1>
+<h1>Products</h1>
 <article>
-    
-<header>
-    <h1>Tu carrito de compras</h1>
-</header>
-<p><strong>Nombre: </strong>{{user.first_Name}}</p>
-<p><strong>Apellido: </strong>{{user.last_Name}}</p>
-<p><strong>E-mail: </strong>{{user.email}}</p>
-<p><strong>Edad: </strong>{{user.age}}</p>
+
+    <header>
+        <h1>Your cart</h1>
+    </header>
+    <p><strong>First Name: </strong>{{user.first_Name}}</p>
+    <p><strong>Last Name: </strong>{{user.last_Name}}</p>
+    <p><strong>E-mail: </strong>{{user.email}}</p>
+    <p><strong>Age: </strong>{{user.age}}</p>
+
 
     </form>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Thumbnail</th>
-        <th>Code</th>
-        <th>Stock</th>
-        <th>Category</th>
-        <th>Quantity</th>
-    </tr>
-    <tr>
-        {{#each products}}
-            <tr>
-                <td>{{product.title}}</td>
-                <td>{{product.description}}</td>
-                <td>{{product.price}}</td>
-                <td>{{product.thumbnail}}</td>
-                <td>{{product.code}}</td>
-                <td>{{product.stock}}</td>
-                <td>{{product.category}}</td>
-                <td>{{quantity}}</td>
-            </tr>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Thumbnail</th>
+            <th>Code</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Delete Product</th>
+        </tr>
+        <tr>
+            {{#each products}}
+        <tr>
+            <td>{{product.title}}</td>
+            <td>{{product.description}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.thumbnail}}</td>
+            <td>{{product.code}}</td>
+            <td>{{product.stock}}</td>
+            <td>{{product.category}}</td>
+            <td>{{quantity}}</td>
+            <td>
+                <button onclick="deleteProduct('{{../user.cart}}', '{{product._id}}')">Delete from Cart</button>
+            </td>
+
+
+        </tr>
         {{/each}}
-    </tr>
-</table>
-<footer>
-<a href="/api/session/logout"role="button">Log-out</a>
-<a href="/profile"role="button">Go to products</a>
-</footer>
+        </tr>
+    </table>
+    <footer>
+        <a href="/api/session/logout" role="button">Log-out</a>
+        <a href="/profile" role="button">Go to products</a>
+        <form action="/api/carts/{{user.cart}}/purchase" method="post">
+            <input type="submit" value="purchase">
+        </form>
+    </footer>
+    <script>
+        function deleteProduct(uid,pid) {
+            fetch(`/api/carts/${uid}/products/${pid}`, {
+                method: 'DELETE',
+            })
+        }
+    </script>
+
 </article>

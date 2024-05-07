@@ -1,7 +1,7 @@
 import ProductController from "../../controllers/products.controller.js";
 import { Router } from "express";
 import { buildResponsePaginated,StrategyMiddleware,authMiddleware, generateProduct } from "../../utils.js";
-
+import EmailService from "../../services/email.service.js";
 const router= Router();
 
 
@@ -107,10 +107,13 @@ router.delete('/products/:id',StrategyMiddleware('jwt'),authMiddleware(['admin',
             //await productmanager.deleteProduct(parseInt(productId));
             //res.status(200).json({message:'the following product was deleted',productId});
             await ProductController.deleteProductById(id);
+            const emailService = EmailService.getInstance();
+            emailService.sendDeleteEmail(user,product);
             res.status(204).end();
         } else if(user.role==="premium" && product.owner!==user.email){
             req.logger.error('error cannot delete product')
-        }else if(user.role==="admin"){
+        }
+        else if(user.role==="admin"){
             await ProductController.deleteProductById(id);
             res.status(204).end();
 

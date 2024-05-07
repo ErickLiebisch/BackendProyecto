@@ -1,39 +1,48 @@
 <h1>Products</h1>
 <article>
-    
-<header>
-    <h1>Welcome!</h1>
-</header>
-<p><strong>First Name: </strong>{{user.first_Name}}</p>
-<p><strong>Last Name: </strong>{{user.last_Name}}</p>
-<p><strong>E-mail: </strong>{{user.email}}</p>
-    </form>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Thumbnail</th>
-        <th>Code</th>
-        <th>Stock</th>
-        <th>Category</th>
-    </tr>
-    <tr>
-        {{#each products}}
-            <tr>
-                <td>{{this.title}}</td>
-                <td>{{this.description}}</td>
-                <td>{{this.price}}</td>
-                <td>{{this.thumbnail}}</td>
-                <td>{{this.code}}</td>
-                <td>{{this.stock}}</td>
-                <td>{{this.category}}</td>
-            </tr>
+
+    <header>
+        <h1>Welcome!</h1>
+    </header>
+    <p><strong>First Name: </strong>{{user.first_Name}}</p>
+    <p><strong>Last Name: </strong>{{user.last_Name}}</p>
+    <p><strong>E-mail: </strong>{{user.email}}</p>
+    <a href="/current" role="button">Go to cart</a>
+   
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Thumbnail</th>
+            <th>Code</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Add to Cart</th>
+        </tr>
+        <tr>
+
+            {{#each products}}
+
+        <tr>
+            <td>{{this.title}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.thumbnail}}</td>
+            <td>{{this.code}}</td>
+            <td>{{this.stock}}</td>
+            <td>{{this.category}}</td>
+            <td>
+                <form action="/api/carts/{{../user.cart}}/product/{{this._id}}" method="post">
+                    <input id="quantity" type="number" name="quantity" placeholder=0 required>
+                    <input type="submit" value="add">
+                </form>
+            </td>
+        </tr>
         {{/each}}
-    </tr>
-</table>
-<footer>
-<a href="/api/session/logout"role="button">Log-out</a>
-<a href="/current"role="button">Ir al carrito</a>
-</footer>
+        </tr>
+    </table>
+    <footer>
+        <a href="/api/session/logout" role="button">Log-out</a>
+    </footer>
 </article>

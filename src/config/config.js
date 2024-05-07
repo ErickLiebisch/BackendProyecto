@@ -16,4 +16,6 @@ export default {
     emailPass: process.env.EMAIL_PASSWORD || 'password',
     emailService: process.env.EMAIL_SERVICE || 'service',
     emailPort: process.env.EMAIL_PORT || 'eport',
+    adminUser: process.env.ADMIN_USER || 'adminCoder@coder.com',
+    adminPass: process.env.ADMIN_PASSWORD || 'adminCod3r123',
 }
